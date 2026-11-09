@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quiz Patente Nautica</title>
+<meta name="theme-color" content="#0a6a7d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Quiz Nautica">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#eff3f5;--surface:#fff;--ink:#13283b;--muted:#5a6b7a;--line:#cfd9e0;
+  --accent:#0a6a7d;--accent-ink:#fff;--accent-soft:#dcedf1;
+  --good:#1d7a46;--good-soft:#dff2e6;--bad:#b3372c;--bad-soft:#f8e1de;--warn:#8a5a00;--warn-soft:#fbefd2;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0e1a24;--surface:#16262f;--ink:#e6eef3;--muted:#93a6b4;--line:#2b404d;--accent:#4cc0d4;--accent-ink:#0b1a22;--accent-soft:#17353f;--good:#58c283;--good-soft:#173826;--bad:#f08a7e;--bad-soft:#40201d;--warn:#f0c46a;--warn-soft:#3a2f12;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0e1a24;--surface:#16262f;--ink:#e6eef3;--muted:#93a6b4;--line:#2b404d;--accent:#4cc0d4;--accent-ink:#0b1a22;--accent-soft:#17353f;--good:#58c283;--good-soft:#173826;--bad:#f08a7e;--bad-soft:#40201d;--warn:#f0c46a;--warn-soft:#3a2f12;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.45;
+  padding:calc(14px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance}
+h1{font-size:clamp(1.7rem,6vw,2.3rem)}h2{font-size:1.25rem}h3{font-size:1.05rem}
+p{margin:0}.muted{color:var(--muted)}.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:11px 16px;font-weight:600;min-height:46px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.card{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0;width:100%}
+.card:hover{border-color:var(--accent)}
+.card strong{font-size:1.05rem}
+.badge{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--accent-soft);color:var(--accent);height:fit-content;white-space:nowrap}
+.badge.g{background:var(--good-soft);color:var(--good)}.badge.b{background:var(--bad-soft);color:var(--bad)}.badge.w{background:var(--warn-soft);color:var(--warn)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:600;font-size:.95rem}
+.tab[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.field{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.field input[type=number]{width:70px;font:inherit;padding:8px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.check{display:flex;gap:10px;align-items:center}.check input{width:20px;height:20px;accent-color:var(--accent)}
+.scale{display:flex;gap:2px;align-items:flex-end;height:26px}
+.tick{flex:1 1 0;min-width:2px;background:var(--line);height:10px;border-radius:1px;border:0;padding:0}
+.tick.done{background:var(--accent);height:16px}.tick.cur{background:var(--ink);height:26px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.timer{font-family:var(--mono);font-weight:700;font-size:1.25rem;padding:4px 12px;border-radius:8px;background:var(--accent-soft);color:var(--accent)}
+.timer.low{background:var(--bad-soft);color:var(--bad)}
+.qtext{font-size:clamp(1.15rem,4.2vw,1.4rem);line-height:1.3;font-weight:600}
+.qimg{max-width:min(100%,340px);max-height:260px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px;align-self:flex-start;display:block}
+.fig{margin:0;display:flex;flex-direction:column;gap:4px}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}.bar .ok{background:var(--good)}.bar .ko{background:var(--bad)}
+.srow{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.srow:last-child{border-bottom:0}
+.srow .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:12px;width:100%;min-width:0}
+.opt .l{font-family:var(--mono);width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:.95rem}
+.opt .t{padding-top:4px;overflow-wrap:anywhere}
+.opt[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
+.opt[aria-pressed=true] .l{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.opt.right{border-color:var(--good);background:var(--good-soft)}.opt.right .l{background:var(--good);border-color:var(--good);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}.opt.wrong .l{background:var(--bad);border-color:var(--bad);color:#fff}
+.vf{display:grid;grid-template-columns:1fr 1fr;gap:10px}.vf .opt{grid-template-columns:1fr;text-align:center;font-weight:700;font-size:1.1rem;padding:16px}
+.notice{border:1.5px solid var(--warn);background:var(--warn-soft);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.stat{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px;display:flex;flex-direction:column}
+.stat b{font-size:2.4rem;line-height:1}.stat.good b{color:var(--good)}.stat.bad b{color:var(--bad)}
+.verdict{padding:12px 14px;border-radius:10px;font-weight:700}.verdict.ok{background:var(--good-soft);color:var(--good)}.verdict.ko{background:var(--bad-soft);color:var(--bad)}
+.item{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--good);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.item.wrong{border-left-color:var(--bad)}
+.item .a{display:grid;grid-template-columns:auto 1fr;gap:8px;font-size:.97rem}
+.sol{background:var(--accent-soft);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.sol div{display:flex;gap:8px}.sol b{font-family:var(--mono);color:var(--accent)}
+.hist div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding:6px 0;font-size:.95rem}
+.small{font-size:.88rem}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const DB = __DATA__;
+const IMG = DB.imgs;
+const T = DB.teoria, V = DB.vela, C = DB.carte;
+const LET = ['A','B','C'];
+const KEY = 'quiz-nautica-v1';
+const app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
+
+/* ---- regole d'esame (modificabili in Impostazioni) ---- */
+const DEFAULT_RULES = {
+  teoria:{n:20, maxErr:4, min:30},
+  vela:{n:5, maxErr:1, min:15},
+  carte:{n:5, maxErr:1, min:20}
+};
+function store(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function save(o){ try{ localStorage.setItem(KEY, JSON.stringify(o)); }catch(e){} }
+function rules(){ const s = store(); return {teoria:{...DEFAULT_RULES.teoria,...(s.rules||{}).teoria}, vela:{...DEFAULT_RULES.vela,...(s.rules||{}).vela}, carte:{...DEFAULT_RULES.carte,...(s.rules||{}).carte}}; }
+function wrongSet(){ return new Set((store().wrong||[])); }
+function addWrong(ids, okIds){ const s = store(); const w = new Set(s.wrong||[]); ids.forEach(i=>w.add(i)); okIds.forEach(i=>w.delete(i)); s.wrong = [...w]; save(s); }
+/* statistiche per domanda: uid -> [tentativi, corrette, ultimo esito 1/0] */
+function recordStats(items, ans, all){
+  const s = store(); const st = s.stats || {};
+  items.forEach(it=>{ const a = ans[it.uid]; if(a===undefined && !all) return;
+    const ok = isCorrect(it,a) ? 1 : 0; const r = st[it.uid] || [0,0,0]; r[0]++; r[1]+=ok; r[2]=ok; st[it.uid]=r; });
+  s.stats = st; save(s);
+}
+function statsOf(items){
+  const st = store().stats || {}; let seen=0, att=0, cor=0, okNow=0, koNow=0;
+  items.forEach(it=>{ const r = st[it.uid]; if(!r) return; seen++; att+=r[0]; cor+=r[1]; r[2]?okNow++:koNow++; });
+  return {tot:items.length, seen, att, cor, okNow, koNow, pct: att? Math.round(100*cor/att) : null};
+}
+function weakItems(items){
+  const st = store().stats || {};
+  const ko = items.filter(it=>st[it.uid] && !st[it.uid][2]);
+  const un = items.filter(it=>!st[it.uid]);
+  const ok = items.filter(it=>st[it.uid] && st[it.uid][2]).sort((a,b)=>(st[a.uid][1]/st[a.uid][0])-(st[b.uid][1]/st[b.uid][0]));
+  return [...shuffle(ko), ...shuffle(un), ...ok].slice(0,20);
+}
+function pushHist(r){ const s = store(); s.hist = [r, ...(s.hist||[])].slice(0,8); save(s); }
+
+/* ---- catalogo ---- */
+const capsT = [...new Set(T.map(q=>q.cap))];
+const capsV = [...new Set(V.map(q=>q.cap))];
+const capsC = [...new Set(C.map(q=>q.arg))];
+const CAPLAB = {orizzontale:'Carteggio: rotta, distanza, tempo e carburante (settore NO)', correnti:'Carteggio: correnti', 'navigazione costiera':'Carteggio: navigazione costiera', scarroccio:'Carteggio: scarroccio', carburante:'Carteggio: carburante'};
+const qT = q => ({kind:'T', uid:'T'+q.n, q});
+const qV = q => ({kind:'V', uid:'V'+q.n, q});
+const qC = (q,i) => ({kind:'C', uid:'C'+q.id, q});
+const pools = {
+  T: () => T.map(qT), V: () => V.map(qV), C: () => C.map(qC)
+};
+function isCorrect(item, a){
+  if(a === undefined) return false;
+  if(item.kind==='T') return a === item.q.c;
+  if(item.kind==='V') return a === item.q.c;      // a boolean
+  return a === true;                              // carteggio: auto-valutazione
+}
+
+/* ---- stato ---- */
+let S = null, timerId = null;
+function stopTimer(){ if(timerId){ clearInterval(timerId); timerId = null; } }
+
+/* ---- HOME ---- */
+function home(tab){
+  stopTimer(); S = null;
+  tab = tab || (store().tab || 'exam');
+  const R = rules(), h = store().hist || [], nW = wrongSet().size;
+  const tabs = [['exam','Simulazione esame'],['topic','Per argomento'],['all','Tutto il programma'],['stats','Statistiche'],['set','Impostazioni']];
+  let body = '';
+  if(tab==='stats'){
+    const groups = [
+      ['Teoria (quiz base)', capsT.map(c=>({k:'T', c, label:c[0]+c.slice(1).toLowerCase(), items:pools.T().filter(x=>x.q.cap===c)}))],
+      ['Vela', capsV.map(c=>({k:'V', c, label:c, items:pools.V().filter(x=>x.q.cap===c)}))],
+      ['Carteggio (autovalutazione)', capsC.map(c=>({k:'C', c, label:CAPLAB[c]||c, items:pools.C().filter(x=>x.q.arg===c)}))]
+    ];
+    const all = statsOf([...pools.T(), ...pools.V(), ...pools.C()]);
+    const row = g => { const s = statsOf(g.items); const w = n => (100*n/s.tot).toFixed(1)+'%';
+      return `<div class="srow"><div class="top"><b>${esc(g.label)}</b><span class="mono small">${s.pct===null?'—':s.pct+'% corrette'}</span></div>
+        <div class="bar" aria-label="Domande giuste e sbagliate all'ultimo tentativo"><i class="ok" style="width:${w(s.okNow)}"></i><i class="ko" style="width:${w(s.koNow)}"></i></div>
+        <div class="top small muted"><span>Viste ${s.seen}/${s.tot} · ${s.okNow} giuste e ${s.koNow} sbagliate all'ultimo tentativo</span>
+        ${g.k!=='C'?`<button class="btn" style="min-height:36px;padding:6px 12px" data-act="weak" data-k="${g.k}" data-c="${esc(g.c)}">Allena</button>`:''}</div></div>`; };
+    body = `<div class="panel"><h2>Statistiche per argomento</h2>
+      <p class="muted small">Contano tutte le risposte date in simulazioni, argomenti e ripassi. La barra mostra, sul totale delle domande, quelle giuste (verde) e sbagliate (rosso) all'ultimo tentativo. «Allena» propone 20 domande: prima quelle sbagliate, poi quelle mai viste.</p>
+      <div class="score"><div class="stat"><b>${all.seen}</b><span class="muted">domande viste su ${all.tot}</span></div><div class="stat good"><b>${all.pct===null?'—':all.pct+'%'}</b><span class="muted">risposte corrette</span></div><div class="stat bad"><b>${all.koNow}</b><span class="muted">da ripassare</span></div></div></div>
+      ${groups.map(([t,gs])=>`<div class="panel"><p class="eyebrow">${t}</p>${gs.map(row).join('')}</div>`).join('')}
+      <button class="btn danger" id="clrS" style="align-self:flex-start">Azzera statistiche</button>`;
+  } else if(tab==='exam'){
+    body = `<div class="panel"><h2>Simulazione d'esame</h2>
+      <p class="muted">Domande estratte a caso dall'Allegato A, con timer e soglia di errori per ogni sezione. Alla fine vedi tutte le risposte, giuste e sbagliate.</p>
+      <div class="grid">
+        <button class="card" data-act="sim" data-s="teoria"><strong>Quiz base (teoria)</strong><span class="muted">${R.teoria.n} domande · ${R.teoria.min} min · max ${R.teoria.maxErr} errori</span></button>
+        <button class="card" data-act="sim" data-s="vela"><strong>Quiz di vela</strong><span class="muted">${R.vela.n} domande vero/falso · ${R.vela.min} min · max ${R.vela.maxErr} errore</span></button>
+        <button class="card" data-act="sim" data-s="carte"><strong>Carteggio</strong><span class="muted">${R.carte.n} quesiti · ${R.carte.min} min · max ${R.carte.maxErr} errore. Svolgi sulla carta nautica, poi confronta con gli intervalli.</span></button>
+        <button class="card" data-act="sim" data-s="full"><strong>Esame completo</strong><span class="muted">Teoria, vela e carteggio di seguito, ognuna con il suo timer.</span></button>
+      </div>
+      <p class="small muted">I tempi e le soglie sono modificabili in «Impostazioni»: verifica con la tua scuola o la Capitaneria i valori in vigore.</p></div>`;
+  } else if(tab==='topic'){
+    const cnt = (arr, cap, key) => arr.filter(x => x[key||'cap']===cap).length;
+    body = `<div class="panel"><h2>Quiz per argomento</h2>
+      <label class="check"><input type="checkbox" id="mix" checked> Mescola l'ordine</label>
+      <label class="check"><input type="checkbox" id="imm"> Mostra subito se la risposta è giusta</label></div>
+      <p class="eyebrow">Teoria (quiz base)</p><div class="grid">${capsT.map(c=>`<button class="card" data-act="topic" data-k="T" data-c="${esc(c)}"><strong>${esc(c[0]+c.slice(1).toLowerCase())}</strong><span class="muted">${cnt(T,c)} domande</span></button>`).join('')}</div>
+      <p class="eyebrow">Vela</p><div class="grid">${capsV.map(c=>`<button class="card" data-act="topic" data-k="V" data-c="${esc(c)}"><strong>${esc(c)}</strong><span class="muted">${cnt(V,c)} domande vero/falso</span></button>`).join('')}</div>
+      <p class="eyebrow">Carteggio (esercizi con soluzione)</p><div class="grid">${capsC.map(c=>`<button class="card" data-act="topic" data-k="C" data-c="${esc(c)}"><strong>${esc(CAPLAB[c]||c)}</strong><span class="muted">${C.filter(x=>x.arg===c).length} esercizi</span></button>`).join('')}</div>`;
+  } else if(tab==='all'){
+    body = `<div class="panel"><h2>Tutto il programma</h2>
+      <p class="muted">Quiz estratti da tutti gli argomenti.</p>
+      <div class="field"><label for="nq">Numero di domande</label><input type="number" id="nq" value="30" min="5" max="200"></div>
+      <label class="check"><input type="checkbox" id="imm"> Mostra subito se la risposta è giusta</label>
+      <div class="grid">
+        <button class="card" data-act="all" data-k="T"><strong>Teoria, a caso</strong><span class="muted">Dalle ${T.length} domande del quiz base</span></button>
+        <button class="card" data-act="all" data-k="V"><strong>Vela, a caso</strong><span class="muted">Dalle ${V.length} domande vero/falso</span></button>
+        <button class="card" data-act="all" data-k="TV"><strong>Teoria + vela</strong><span class="muted">Mix di tutto</span></button>
+        <button class="card" data-act="wrong" ${nW?'':'disabled'}><strong>Ripassa i miei errori</strong><span class="muted">${nW} domande sbagliate da ripassare</span></button>
+      </div></div>`;
+  } else {
+    body = `<div class="panel"><h2>Impostazioni dell'esame</h2>
+      <p class="muted small">Valori ufficiali dalle avvertenze per i candidati del Ministero (fascicolo delle rappresentazioni grafiche): carteggio 5 quesiti, almeno 4 esatti, 20 minuti; quiz base 20 domande, max 4 errori, 30 minuti; quiz vela 5 quesiti, almeno 4 esatti, 15 minuti. Puoi modificarli per esercitarti.</p>
+      ${['teoria','vela','carte'].map(k=>`<div class="field"><b style="min-width:80px">${{teoria:'Teoria',vela:'Vela',carte:'Carteggio'}[k]}</b>
+        <label>Domande <input type="number" data-r="${k}.n" value="${R[k].n}" min="1"></label>
+        <label>Errori max <input type="number" data-r="${k}.maxErr" value="${R[k].maxErr}" min="0"></label>
+        <label>Minuti <input type="number" data-r="${k}.min" value="${R[k].min}" min="1"></label></div>`).join('')}
+      <div class="row"><button class="btn primary" id="saveR">Salva</button><button class="btn" id="resetR">Ripristina</button></div>
+      <div class="row"><button class="btn danger" id="clrW">Azzera elenco errori</button><button class="btn" id="theme">Tema chiaro/scuro</button></div></div>`;
+  }
+  app.innerHTML = `<header style="display:flex;flex-direction:column;gap:6px">
+      <p class="eyebrow">Patente nautica entro le 12 miglia · vela e motore</p><h1>Quiz Allegato A</h1>
+      <p class="muted">${T.length} quiz di teoria, ${V.length} di vela, ${C.length} esercizi di carteggio (DD 131 del 31 maggio 2022).</p></header>
+    <nav class="tabs">${tabs.map(([k,l])=>`<button class="tab" data-tab="${k}" aria-pressed="${k===tab}">${l}</button>`).join('')}</nav>
+    ${body}
+    ${tab==='exam'&&h.length?`<div class="panel hist"><p class="eyebrow">Ultimi risultati</p>${h.map(r=>`<div><span>${esc(r.when)} · ${esc(r.label)}</span><span class="mono">${r.ok}/${r.tot} · ${r.err} err. ${r.pass===null?'':(r.pass?'✔':'✘')}</span></div>`).join('')}</div>`:''}`;
+  app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ const s=store(); s.tab=b.dataset.tab; save(s); home(b.dataset.tab); });
+  const g = id => document.getElementById(id);
+  app.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{
+    const a = b.dataset.act;
+    if(a==='sim') return startSim(b.dataset.s);
+    if(a==='topic'){ const k=b.dataset.k, c=b.dataset.c; let items = pools[k]().filter(x=> (k==='C'? x.q.arg : x.q.cap)===c); if(g('mix').checked) items=shuffle(items); return start({label:'Argomento · '+(CAPLAB[c]||c), items, imm:g('imm').checked, mode:'topic'}); }
+    if(a==='all'){ const n=Math.max(5,Math.min(200,+g('nq').value||30)); const k=b.dataset.k; let p=[]; if(k.includes('T')) p=p.concat(pools.T()); if(k.includes('V')) p=p.concat(pools.V()); return start({label:'Programma · '+n+' domande', items:shuffle(p).slice(0,n), imm:g('imm').checked, mode:'all'}); }
+    if(a==='weak'){ const k=b.dataset.k, c=b.dataset.c; return start({label:'Allenamento · '+c, items:weakItems(pools[k]().filter(x=>x.q.cap===c)), imm:true, mode:'weak'}); }
+    if(a==='wrong'){ const w=wrongSet(); const items=[...pools.T(),...pools.V()].filter(x=>w.has(x.uid)); return start({label:'Ripasso errori', items:shuffle(items), imm:true, mode:'wrong'}); }
+  });
+  if(g('saveR')) g('saveR').onclick=()=>{ const o={}; app.querySelectorAll('[data-r]').forEach(i=>{ const [k,f]=i.dataset.r.split('.'); (o[k]=o[k]||{})[f]=Math.max(0,+i.value||0); }); const s=store(); s.rules=o; save(s); home('set'); };
+  if(g('resetR')) g('resetR').onclick=()=>{ const s=store(); delete s.rules; save(s); home('set'); };
+  if(g('clrS')) g('clrS').onclick=()=>{ if(confirm('Azzerare tutte le statistiche?')){ const s=store(); s.stats={}; save(s); home('stats'); } };
+  if(g('clrW')) g('clrW').onclick=()=>{ const s=store(); s.wrong=[]; save(s); home('set'); };
+  if(g('theme')) g('theme').onclick=()=>{ const el=document.documentElement; const dark = el.dataset.theme? el.dataset.theme==='dark' : matchMedia('(prefers-color-scheme:dark)').matches; el.dataset.theme = dark?'light':'dark'; };
+}
+
+/* ---- avvio sessioni ---- */
+function startSim(kind){
+  const R = rules();
+  const sec = k => ({key:k, label:{teoria:'Quiz base (teoria)',vela:'Quiz di vela',carte:'Carteggio'}[k], ...R[k],
+    items: shuffle(k==='teoria'?pools.T():k==='vela'?pools.V():pools.C()).slice(0,R[k].n)});
+  const secs = kind==='full' ? ['carte','teoria','vela'].map(sec) : [sec(kind)];
+  S = {mode:'sim', secs, si:0, results:[]};
+  beginSection();
+}
+function beginSection(){
+  const sec = S.secs[S.si];
+  S.cur = {label:sec.label, items:sec.items, ans:{}, i:0, imm:false, sec, deadline:Date.now()+sec.min*60000, done:false, confirm:false, shown:{}};
+  runTimer(); question();
+}
+function start(o){
+  S = {mode:o.mode, secs:null, cur:{label:o.label, items:o.items, ans:{}, i:0, imm:o.imm, sec:null, deadline:null, done:false, confirm:false, shown:{}}};
+  question();
+}
+function runTimer(){
+  stopTimer();
+  timerId = setInterval(()=>{
+    const c = S && S.cur; if(!c || c.done || !c.deadline) return stopTimer();
+    const left = c.deadline - Date.now(); const el = document.getElementById('timer');
+    if(el){ el.textContent = fmt(left); el.classList.toggle('low', left < 5*60000 && left < c.sec.min*60000/3); }
+    if(left <= 0){ stopTimer(); finishSection(true); }
+  }, 500);
+}
+const fmt = ms => { ms=Math.max(0,ms); const s=Math.ceil(ms/1000); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); };
+
+/* ---- domanda ---- */
+function question(){
+  const c = S.cur, it = c.items[c.i], q = it.q, a = c.ans[it.uid];
+  const answered = Object.keys(c.ans).length, un = c.items.length - answered, last = c.i===c.items.length-1;
+  const reveal = c.imm && a!==undefined;
+  let main = '';
+  if(it.kind==='T'){
+    main = `<div class="opts">${q.o.map((o,k)=>{ let cls=''; if(reveal){ if(k===q.c) cls='right'; else if(k===a) cls='wrong'; }
+      return `<button class="opt ${cls}" data-a="${k}" aria-pressed="${a===k}" ${reveal?'disabled':''}><span class="l">${LET[k]}</span><span class="t">${esc(o)}</span></button>`; }).join('')}</div>`;
+  } else if(it.kind==='V'){
+    main = `<div class="vf">${[true,false].map(v=>{ let cls=''; if(reveal){ if(v===q.c) cls='right'; else if(v===a) cls='wrong'; }
+      return `<button class="opt ${cls}" data-a="${v}" aria-pressed="${a===v}" ${reveal?'disabled':''}>${v?'VERO':'FALSO'}</button>`; }).join('')}</div>`;
+  } else {
+    const shown = c.shown[it.uid];
+    main = `<p class="small muted">Svolgi l'esercizio sulla carta nautica (carta 5D/42D del kit d'esame). Poi tocca «Mostra soluzione» e valuta se i tuoi risultati rientrano negli intervalli.</p>
+      ${shown?`<div class="sol">${q.a.map((x,k)=>`<div><b>${q.a.length>1?'Q'+(k+1):'R'}</b><span>${esc(x)}</span></div>`).join('')}</div>
+      <div class="vf"><button class="opt ${a===true?'right':''}" data-a="true" aria-pressed="${a===true}">Giusto</button><button class="opt ${a===false?'wrong':''}" data-a="false" aria-pressed="${a===false}">Sbagliato</button></div>`
+      :`<button class="btn primary" id="show">Mostra soluzione</button>`}`;
+  }
+  const expl = (reveal && it.kind==='T') ? `<p class="verdict ${a===q.c?'ok':'ko'}">${a===q.c?'Risposta corretta.':'Sbagliata. Giusta: '+LET[q.c]+'.'}</p>` : (reveal && it.kind==='V') ? `<p class="verdict ${a===q.c?'ok':'ko'}">${a===q.c?'Risposta corretta.':'Sbagliata: l\'affermazione è '+(q.c?'vera':'falsa')+'.'}</p>` : '';
+  app.innerHTML = `
+    <div class="topbar"><span class="eyebrow">${esc(c.label)}</span>${c.deadline?`<span class="timer" id="timer">${fmt(c.deadline-Date.now())}</span>`:''}</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="topbar"><span class="eyebrow">Domanda ${c.i+1} di ${c.items.length}</span><span class="mono muted small">${answered} date</span></div>
+      <div class="scale">${c.items.map((x,k)=>`<button class="tick ${k===c.i?'cur':(c.ans[x.uid]!==undefined?'done':'')}" data-k="${k}" aria-label="Vai alla domanda ${k+1}"></button>`).join('')}</div>
+    </div>
+    <div class="panel">
+      <div class="topbar"><span class="badge">${it.kind==='C'?esc(q.id):esc(q.id)}</span><span class="muted small">${esc(it.kind==='T'?q.voce:(it.kind==='V'?q.cap:q.arg))}</span></div>
+      <p class="qtext">${esc(q.q)}</p>
+      ${q.fig?`<figure class="fig"><img class="qimg" src="${IMG[q.fig]}" alt="Figura ${q.fig}"><figcaption class="small muted">Figura ${q.fig}</figcaption></figure>`:''}
+      ${main}${expl}
+    </div>
+    ${c.confirm?`<div class="notice"><p><b>${un} ${un===1?'domanda senza risposta':'domande senza risposta'}.</b> Contano come errori. Concludere comunque?</p><div class="row"><button class="btn primary" id="go">Correggi ora</button><button class="btn" id="back">Torna al test</button></div></div>`:''}
+    <div class="topbar"><button class="btn" id="prev" ${c.i===0?'disabled':''}>Indietro</button>
+      <div class="row">${a!==undefined&&!c.imm?'<button class="btn" id="clr">Togli risposta</button>':''}
+      ${last?'<button class="btn primary" id="end">Concludi e correggi</button>':'<button class="btn primary" id="next">Avanti</button>'}</div></div>
+    ${last?'':'<button class="btn" id="fin" style="align-self:flex-start">Concludi adesso</button>'}
+    <button class="btn" id="quit" style="align-self:flex-start">Esci</button>`;
+  const $ = id => document.getElementById(id);
+  app.querySelectorAll('.opt[data-a]').forEach(b=>b.onclick=()=>{ const v=b.dataset.a; c.ans[it.uid] = (it.kind==='T')? +v : (v==='true'); c.confirm=false; keep(); });
+  app.querySelectorAll('.tick').forEach(b=>b.onclick=()=>{ c.i=+b.dataset.k; c.confirm=false; question(); window.scrollTo(0,0); });
+  if($('prev')) $('prev').onclick=()=>{ c.i--; c.confirm=false; question(); window.scrollTo(0,0); };
+  if($('next')) $('next').onclick=()=>{ c.i++; c.confirm=false; question(); window.scrollTo(0,0); };
+  if($('clr')) $('clr').onclick=()=>{ delete c.ans[it.uid]; keep(); };
+  if($('show')) $('show').onclick=()=>{ c.shown[it.uid]=true; keep(); };
+  const tryEnd = () => { if(un>0 && !c.confirm){ c.confirm=true; keep(); } else finishSection(false); };
+  if($('end')) $('end').onclick=tryEnd; if($('fin')) $('fin').onclick=tryEnd;
+  if($('go')) $('go').onclick=()=>finishSection(false);
+  if($('back')) $('back').onclick=()=>{ c.confirm=false; keep(); };
+  if($('quit')) $('quit').onclick=()=>{ if(confirm('Uscire senza correggere? Le risposte andranno perse.')) home(); };
+}
+function keep(){ const y=scrollY; question(); scrollTo(0,y); }
+
+/* ---- correzione ---- */
+function finishSection(timeUp){
+  stopTimer();
+  const c = S.cur; c.done = true; c.timeUp = timeUp;
+  const bad = c.items.filter(it=>!isCorrect(it,c.ans[it.uid])), good = c.items.filter(it=>isCorrect(it,c.ans[it.uid]));
+  c.ok = good.length; c.err = bad.length; c.tot = c.items.length;
+  c.pass = c.sec ? c.err <= c.sec.maxErr : null;
+  addWrong(bad.filter(i=>i.kind!=='C').map(i=>i.uid), good.map(i=>i.uid));
+  recordStats(c.items, c.ans, !!c.sec);
+  const d = new Date();
+  pushHist({when:d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}), label:c.label, ok:c.ok, tot:c.tot, err:c.err, pass:c.pass});
+  if(S.secs) S.results.push({label:c.label, ok:c.ok, tot:c.tot, err:c.err, pass:c.pass});
+  results();
+}
+function results(){
+  const c = S.cur, un = c.items.filter(it=>c.ans[it.uid]===undefined).length;
+  c.filter = c.filter || 'all';
+  const wrong = c.items.filter(it=>!isCorrect(it,c.ans[it.uid]));
+  const shown = c.filter==='err' ? wrong : c.items;
+  const moreSec = S.secs && S.si < S.secs.length-1;
+  app.innerHTML = `
+    <header style="display:flex;flex-direction:column;gap:6px"><p class="eyebrow">Correzione · ${esc(c.label)}</p><h1>${c.ok} corrette su ${c.tot}</h1></header>
+    ${c.timeUp?'<p class="verdict ko">Tempo scaduto: le domande senza risposta sono contate come errori.</p>':''}
+    <div class="score"><div class="stat good"><b>${c.ok}</b><span class="muted">Corrette</span></div><div class="stat bad"><b>${c.err}</b><span class="muted">Errori${un?` (${un} senza risposta)`:''}</span></div></div>
+    ${c.sec?`<p class="verdict ${c.pass?'ok':'ko'}">${c.pass?`SUPERATO: ${c.err} ${c.err===1?'errore':'errori'} su un massimo di ${c.sec.maxErr}.`:`NON SUPERATO: ${c.err} errori, il massimo ammesso è ${c.sec.maxErr}.`}</p>`:''}
+    ${S.secs&&!moreSec&&S.secs.length>1?`<div class="panel"><h3>Esito complessivo</h3>${S.results.map(r=>`<div class="topbar"><span>${esc(r.label)}</span><span class="badge ${r.pass?'g':'b'}">${r.ok}/${r.tot} · ${r.pass?'superato':'non superato'}</span></div>`).join('')}
+      <p class="verdict ${S.results.every(r=>r.pass)?'ok':'ko'}">${S.results.every(r=>r.pass)?'Esame superato in tutte le prove.':'Esame non superato: almeno una prova è sotto soglia.'}</p></div>`:''}
+    <div class="row">
+      ${moreSec?'<button class="btn primary" id="nextsec">Prossima sezione →</button>':''}
+      <button class="btn ${moreSec?'':'primary'}" id="home">Torna all'inizio</button>
+      ${wrong.length?`<button class="btn" id="flt">${c.filter==='err'?'Mostra tutte':'Mostra solo errori ('+wrong.length+')'}</button>`:''}
+      ${wrong.length&&c.items[0].kind!=='C'?`<button class="btn" id="retry">Rifai gli errori</button>`:''}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">${shown.map(it=>{
+      const q=it.q, a=c.ans[it.uid], good=isCorrect(it,a); let body='';
+      if(it.kind==='T'){ const r=q.c; body = (good?'':`<div class="a"><span class="badge b">La tua</span><span>${a===undefined?'— nessuna risposta':LET[a]+'. '+esc(q.o[a])}</span></div>`)+`<div class="a"><span class="badge g">Giusta</span><span>${LET[r]}. ${esc(q.o[r])}</span></div>`; }
+      else if(it.kind==='V'){ body = (good?'':`<div class="a"><span class="badge b">La tua</span><span>${a===undefined?'— nessuna risposta':(a?'VERO':'FALSO')}</span></div>`)+`<div class="a"><span class="badge g">Giusta</span><span>${q.c?'VERO':'FALSO'}</span></div>`; }
+      else body = `<div class="sol">${q.a.map((x,k)=>`<div><b>${q.a.length>1?'Q'+(k+1):'R'}</b><span>${esc(x)}</span></div>`).join('')}</div><p class="small muted">Autovalutazione: ${a===true?'giusto':a===false?'sbagliato':'non valutato'}</p>`;
+      return `<article class="item ${good?'':'wrong'}"><div class="topbar"><span class="badge">${esc(q.id)}</span><span class="badge ${good?'g':'b'}">${good?'Corretta':(a===undefined?'Senza risposta':'Errata')}</span></div>
+        <p style="font-weight:600">${esc(q.q)}</p>${q.fig?`<img class="qimg" src="${IMG[q.fig]}" alt="Figura ${q.fig}">`:''}${body}</article>`; }).join('')}</div>`;
+  const $ = id => document.getElementById(id);
+  $('home').onclick = () => home();
+  if($('nextsec')) $('nextsec').onclick = () => { S.si++; beginSection(); window.scrollTo(0,0); };
+  if($('flt')) $('flt').onclick = () => { c.filter = c.filter==='err'?'all':'err'; results(); };
+  if($('retry')) $('retry').onclick = () => start({label:'Ripasso errori', items:shuffle(wrong), imm:true, mode:'wrong'});
+  window.scrollTo(0,0);
+}
+
+document.addEventListener('keydown', e => {
+  if(!S || !S.cur || S.cur.done || e.target.matches('input')) return;
+  const c=S.cur, it=c.items[c.i];
+  if(it.kind==='T'){ const k={'1':0,'2':1,'3':2,'a':0,'b':1,'c':2}[e.key.toLowerCase()]; if(k!==undefined){ c.ans[it.uid]=k; keep(); return; } }
+  if(it.kind==='V'){ const k={'v':true,'f':false}[e.key.toLowerCase()]; if(k!==undefined){ c.ans[it.uid]=k; keep(); return; } }
+  if(e.key==='ArrowRight'&&c.i<c.items.length-1){ c.i++; question(); } else if(e.key==='ArrowLeft'&&c.i>0){ c.i--; question(); }
+});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+home();
+</script>
+</body>
+</html>
